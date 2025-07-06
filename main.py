@@ -4,11 +4,14 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-# Carga el token desde .env
+# Carga variables del entorno
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+# Intents completos
 intents = discord.Intents.all()
+
+# Define el bot como selfbot
 bot = commands.Bot(command_prefix=">", self_bot=True, intents=intents)
 
 # Variables globales
@@ -22,10 +25,14 @@ repeat_task = None
 repeat_message = None
 repeat_delay = 0
 
+# Actividad personalizada al iniciar
 @bot.event
 async def on_ready():
+    activity = discord.Game(name="sub token client")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
     print(f"✅ Selfbot conectado como {bot.user}")
 
+# Reacción automática a mensajes
 @bot.event
 async def on_message(message):
     await bot.process_commands(message)
@@ -35,6 +42,7 @@ async def on_message(message):
         except Exception as e:
             print(f"Error al reaccionar: {e}")
 
+# Enviar mensaje y borrar comando
 @bot.command(name='s')
 async def say(ctx, *, message):
     try:
@@ -43,6 +51,7 @@ async def say(ctx, *, message):
     except Exception as e:
         print(f"Error en >s: {e}")
 
+# Spam automático
 @bot.command(name='sm')
 async def spam(ctx, cantidad: int, tiempo: float, *, mensaje="Mensaje"):
     global stop_spam
@@ -56,6 +65,7 @@ async def spam(ctx, cantidad: int, tiempo: float, *, mensaje="Mensaje"):
     except Exception as e:
         print(f"Error en >sm: {e}")
 
+# Detener spam y loops
 @bot.command(name='stop')
 async def stop(ctx):
     global stop_spam, stop_react, repeat_task
@@ -69,6 +79,7 @@ async def stop(ctx):
     except:
         pass
 
+# Purgar mensajes del selfbot
 @bot.command(name='purge')
 async def purge(ctx, cantidad: int):
     try:
@@ -78,6 +89,7 @@ async def purge(ctx, cantidad: int):
     except Exception as e:
         print(f"Error en >purge: {e}")
 
+# Repetir mensajes cada X segundos
 @bot.command(name='repeat')
 async def repeat(ctx, delay: float, *, message=None):
     global repeat_task, repeat_message, repeat_delay
@@ -107,6 +119,7 @@ async def repeat_message_task(channel_id):
             print(f"Error en repeat loop: {e}")
             break
 
+# Reacción automática en canal
 @bot.command(name='areact')
 async def areact(ctx, canal_id: int, duracion, emoji):
     global react_enabled, react_emoji, react_channel_id, react_task, stop_react
@@ -138,6 +151,23 @@ async def react_auto(duration):
     react_enabled = False
     print("⏱ Reacción automática detenida por tiempo.")
 
+# 🟢 Comando para cambiar el status (online, idle, dnd, invisible)
+@bot.command(name="status")
+async def status(ctx, estado):
+    estados = {
+        "online": discord.Status.online,
+        "idle": discord.Status.idle,
+        "dnd": discord.Status.dnd,
+        "invisible": discord.Status.invisible
+    }
+    estado = estado.lower()
+    if estado in estados:
+        await bot.change_presence(status=estados[estado])
+        await ctx.send(f"✅ Estado cambiado a **{estado}**.")
+    else:
+        await ctx.send("❌ Estado inválido. Usa: online, idle, dnd, invisible.")
+
+# Lista de comandos
 @bot.command(name='cmds')
 async def cmds(ctx):
     embed = discord.Embed(title="📜 Selfbot Commands", color=0x00ff00)
@@ -146,7 +176,9 @@ async def cmds(ctx):
     embed.add_field(name=">purge <número>", value="Elimina tus últimos mensajes.", inline=False)
     embed.add_field(name=">repeat <delay> <mensaje?>", value="Repite un mensaje cada X segundos.", inline=False)
     embed.add_field(name=">stop", value="Detiene spam y repeticiones.", inline=False)
-    embed.add_field(name=">areact <canal_id> <duración> <emoji>", value="Reacciona automáticamente a mensajes en un canal.", inline=False)
+    embed.add_field(name=">areact <canal_id> <duración> <emoji>", value="Reacciona automáticamente en canal.", inline=False)
+    embed.add_field(name=">status <online|idle|dnd|invisible>", value="Cambia tu estado visible en Discord.", inline=False)
     await ctx.send(embed=embed)
 
+# Ejecutar bot
 bot.run(TOKEN)
