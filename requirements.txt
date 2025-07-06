@@ -1,2 +1,4 @@
 discord.py==2.0.0
 python-dotenv==0.19.2
+# Evita instalar voz/audio
+PyNaCl==0.0.1
