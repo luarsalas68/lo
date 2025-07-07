@@ -16,7 +16,6 @@ idna>=2.0
 multidict>=4.0,<7.0
 typing-extensions>=4.0.0
 yarl>=1.0,<2.0
-audioop
 
 # Additional dependencies sometimes required in new Python/aiohttp
 propcache
