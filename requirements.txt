@@ -1,13 +1,26 @@
+# Main package for Discord selfbots
 discord.py-self
-frozenlist>=1.1.1
+
+# For .env support
 python-dotenv
+
+# aiohttp and all sub-dependencies (needed for HTTP, WebSocket, etc)
 aiohttp>=3.7.4,<4
-yarl>=1.0,<2.0
-multidict>=4.0,<7.0
-typing-extensions>=4.0.0
+
+# aiohttp dependencies
+async-timeout>=3.0,<5.0
 attrs>=17.3.0
 chardet>=2.0,<6.0
-async-timeout>=3.0,<5.0
-idna>=2.0
 frozenlist>=1.1.1
+idna>=2.0
+multidict>=4.0,<7.0
+typing-extensions>=4.0.0
+yarl>=1.0,<2.0
+
+# Additional dependencies sometimes required in new Python/aiohttp
 propcache
+aiohappyeyeballs
+
+# (Optional) For legacy or edge-case environments; rarely needed but safe to include
+certifi
+charset-normalizer
